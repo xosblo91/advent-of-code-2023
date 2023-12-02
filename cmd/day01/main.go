@@ -1,4 +1,4 @@
-package day1
+package day01
 
 import (
 	"bufio"
@@ -28,7 +28,7 @@ var match = map[string]string{
 	"nine":  "9",
 }
 
-func calibration1(input []string) int {
+func calibration1(input []string) (int, error) {
 	sum := 0
 	for _, calibration := range input {
 		current := ""
@@ -41,12 +41,12 @@ func calibration1(input []string) int {
 
 		v, err := strconv.Atoi(current[0:1] + current[len(current)-1:])
 		if err != nil {
-			panic("fail")
+			return 0, err
 		}
 		sum += v
 	}
 
-	return sum
+	return sum, nil
 }
 
 type set struct {
@@ -54,7 +54,7 @@ type set struct {
 	value string
 }
 
-func calibration2(input []string) int {
+func calibration2(input []string) (int, error) {
 	sum := 0
 	for _, calibration := range input {
 		minimum := 999999
@@ -89,13 +89,13 @@ func calibration2(input []string) int {
 
 		v, err := strconv.Atoi(first + last)
 		if err != nil {
-			panic("fail")
+			return 0, err
 		}
 
 		sum += v
 	}
 
-	return sum
+	return sum, nil
 }
 
 func readInput() ([]string, error) {

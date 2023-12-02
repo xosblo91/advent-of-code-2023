@@ -1,4 +1,4 @@
-package day1
+package day01
 
 import (
 	"testing"
@@ -10,7 +10,9 @@ func TestPart1(t *testing.T) {
 	input, err := readInput()
 	require.NoError(t, err)
 
-	sum := calibration1(input)
+	sum, err := calibration1(input)
+	require.NoError(t, err)
+
 	t.Log(sum)
 }
 
@@ -18,6 +20,8 @@ func TestPart2(t *testing.T) {
 	input, err := readInput()
 	require.NoError(t, err)
 
-	sum := calibration2(input)
+	sum, err := calibration2(input)
+	require.NoError(t, err)
+
 	t.Log(sum)
 }
