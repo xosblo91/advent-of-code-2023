@@ -10,9 +10,7 @@ func TestPart1(t *testing.T) {
 	input, err := readInput()
 	require.NoError(t, err)
 
-	sum, err := calibration1(input)
-	require.NoError(t, err)
-
+	sum := part1(input)
 	t.Log(sum)
 }
 
@@ -20,8 +18,6 @@ func TestPart2(t *testing.T) {
 	input, err := readInput()
 	require.NoError(t, err)
 
-	sum, err := calibration2(input)
-	require.NoError(t, err)
-
+	sum := part2(input)
 	t.Log(sum)
 }
