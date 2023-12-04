@@ -38,10 +38,10 @@ func (c card) matchingNumbers() int {
 	return matches
 }
 
-func part1(games []card) int {
+func part1(cards []card) int {
 	sum := 0
 
-	for _, g := range games {
+	for _, g := range cards {
 		sum += g.sumOfMatchingNumbers()
 	}
 
@@ -81,7 +81,7 @@ func readInput() ([]card, error) {
 		return nil, err
 	}
 
-	games := make([]card, 0)
+	cards := make([]card, 0)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -106,8 +106,8 @@ func readInput() ([]card, error) {
 			}
 		}
 
-		games = append(games, g)
+		cards = append(cards, g)
 	}
 
-	return games, nil
+	return cards, nil
 }
