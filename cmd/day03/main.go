@@ -106,36 +106,36 @@ func part1(input [][]string) int {
 	return sum
 }
 
-type set struct {
+type coordinates struct {
 	x int
 	y int
 }
 
-type sets struct {
-	s      []set
-	number int
+type part struct {
+	indices []coordinates
+	number  int
 }
 
 func part2(input [][]string) int {
-	r := getGearPositions(input)
-	ss := getNumberPositions(input)
+	gears := getGearCoordinates(input)
+	parts := getPartCoordinates(input)
 
-	return findEngines(r, ss)
+	return findEngines(gears, parts)
 }
 
-func findEngines(gears []set, numbers []sets) int {
+func findEngines(gears []coordinates, parts []part) int {
 	connections := make(map[string][]int)
-	for _, g := range gears {
-		for _, ss := range numbers {
-			for _, s := range ss.s {
-				if abs(s.x-g.x) <= 1 && abs(s.y-g.y) <= 1 {
-					key := strconv.Itoa(g.x) + strconv.Itoa(g.y)
+	for _, gear := range gears {
+		for _, part := range parts {
+			for _, index := range part.indices {
+				if abs(index.x-gear.x) <= 1 && abs(index.y-gear.y) <= 1 {
+					key := strconv.Itoa(gear.x) + strconv.Itoa(gear.y)
 					value, exist := connections[key]
 					if !exist {
-						connections[key] = []int{ss.number}
+						connections[key] = []int{part.number}
 					} else {
 						temp := value
-						temp = append(temp, ss.number)
+						temp = append(temp, part.number)
 						connections[key] = temp
 					}
 					break
@@ -161,12 +161,12 @@ func abs(n int) int {
 	return n
 }
 
-func getGearPositions(input [][]string) []set {
-	positions := make([]set, 0)
+func getGearCoordinates(input [][]string) []coordinates {
+	c := make([]coordinates, 0)
 	for y, row := range input {
 		for x, value := range row {
 			if value == "*" {
-				positions = append(positions, set{
+				c = append(c, coordinates{
 					x: x,
 					y: y,
 				})
@@ -174,16 +174,16 @@ func getGearPositions(input [][]string) []set {
 		}
 	}
 
-	return positions
+	return c
 }
 
 // absolute trash
-func getNumberPositions(input [][]string) []sets {
-	all := make([]sets, 0)
+func getPartCoordinates(input [][]string) []part {
+	all := make([]part, 0)
 	combined := ""
 	for y, row := range input {
 		index := make([]int, 0)
-		positions := make([]set, 0)
+		c := make([]coordinates, 0)
 		for x, value := range row {
 			_, err := strconv.Atoi(value)
 
@@ -191,21 +191,21 @@ func getNumberPositions(input [][]string) []sets {
 				r, _ := strconv.Atoi(combined)
 				combined = ""
 				for _, i := range index {
-					positions = append(positions, set{
+					c = append(c, coordinates{
 						x: i,
 						y: y,
 					})
 				}
 
-				if len(positions) > 0 {
-					all = append(all, sets{
-						s:      positions,
-						number: r,
+				if len(c) > 0 {
+					all = append(all, part{
+						indices: c,
+						number:  r,
 					})
 				}
 
 				index = nil
-				positions = nil
+				c = nil
 
 				continue
 			}
@@ -217,19 +217,18 @@ func getNumberPositions(input [][]string) []sets {
 				r, _ := strconv.Atoi(combined)
 				combined = ""
 				for _, i := range index {
-					positions = append(positions, set{
+					c = append(c, coordinates{
 						x: i,
 						y: y,
 					})
 				}
 
-				if len(positions) > 0 {
-					all = append(all, sets{
-						s:      positions,
-						number: r,
+				if len(c) > 0 {
+					all = append(all, part{
+						indices: c,
+						number:  r,
 					})
 				}
-
 			}
 		}
 	}
