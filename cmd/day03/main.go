@@ -177,6 +177,7 @@ func getGearPositions(input [][]string) []set {
 	return positions
 }
 
+// absolute trash
 func getNumberPositions(input [][]string) []sets {
 	all := make([]sets, 0)
 	combined := ""
@@ -211,6 +212,25 @@ func getNumberPositions(input [][]string) []sets {
 
 			combined += value
 			index = append(index, x)
+
+			if x == len(row)-1 {
+				r, _ := strconv.Atoi(combined)
+				combined = ""
+				for _, i := range index {
+					positions = append(positions, set{
+						x: i,
+						y: y,
+					})
+				}
+
+				if len(positions) > 0 {
+					all = append(all, sets{
+						s:      positions,
+						number: r,
+					})
+				}
+
+			}
 		}
 	}
 
