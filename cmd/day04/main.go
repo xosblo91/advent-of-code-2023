@@ -8,16 +8,16 @@ import (
 	"strings"
 )
 
-type game struct {
-	Card           string
+type card struct {
+	CardNumber     string
 	Numbers        []string
 	WinningNumbers []string
 }
 
-func (g game) sumOfMatchingNumbers() int {
+func (c card) sumOfMatchingNumbers() int {
 	matches := 0
-	for _, n := range g.Numbers {
-		if slices.Contains(g.WinningNumbers, n) {
+	for _, n := range c.Numbers {
+		if slices.Contains(c.WinningNumbers, n) {
 			matches++
 			continue
 		}
@@ -26,10 +26,10 @@ func (g game) sumOfMatchingNumbers() int {
 	return int(math.Pow(2, float64(matches)-1))
 }
 
-func (g game) matchingNumbers() int {
+func (c card) matchingNumbers() int {
 	matches := 0
-	for _, n := range g.Numbers {
-		if slices.Contains(g.WinningNumbers, n) {
+	for _, n := range c.Numbers {
+		if slices.Contains(c.WinningNumbers, n) {
 			matches++
 			continue
 		}
@@ -38,7 +38,7 @@ func (g game) matchingNumbers() int {
 	return matches
 }
 
-func part1(games []game) int {
+func part1(games []card) int {
 	sum := 0
 
 	for _, g := range games {
@@ -48,59 +48,46 @@ func part1(games []game) int {
 	return sum
 }
 
-func part2(games []game) int {
-	copies := make([]int, len(games))
-	// deck := make([]int, 1024)
-	// ncard := 0
-	// for i := range copies {
-	// 	copies[i] = 1
-	// }
+func part2(cards []card) int {
+	originalAndCopies := make([]int, 0, len(cards))
 
-	for index, g := range games {
-		matchingCards := g.sumOfMatchingNumbers()
+	// at least one of the original cards
+	for range cards {
+		originalAndCopies = append(originalAndCopies, 1)
+	}
+
+	for index, game := range cards {
+		matchingCards := game.matchingNumbers()
 		if matchingCards == 0 {
 			continue
 		}
 
-		startIdx := index + 1
-		endIdx := min(len(games), index+matchingCards)
-
-		c := games[startIdx : endIdx-1]
-
-		println(c)
-
-		currentCardCopies := copies[index]
-		for i := startIdx; i <= endIdx; i++ {
-			// increase count by adding copy of current card
-			copies = append(copies, currentCardCopies)
+		for i := index + 1; i <= index+matchingCards; i++ {
+			originalAndCopies[i] += originalAndCopies[index]
 		}
 	}
 
 	sum := 0
-	for _, v := range copies {
-		sum += v
+	for _, count := range originalAndCopies {
+		sum += count
 	}
 
 	return sum
 }
 
-func count() {
-
-}
-
-func readInput() ([]game, error) {
+func readInput() ([]card, error) {
 	f, err := os.Open("input.txt")
 	if err != nil {
 		return nil, err
 	}
 
-	games := make([]game, 0)
+	games := make([]card, 0)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		split1 := strings.Split(scanner.Text(), ":")
 
-		g := game{Card: split1[0]}
+		g := card{CardNumber: split1[0]}
 
 		split2 := strings.Split(split1[1], "|")
 
