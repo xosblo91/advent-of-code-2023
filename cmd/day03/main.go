@@ -120,10 +120,10 @@ func part2(input [][]string) int {
 	gears := getGearCoordinates(input)
 	parts := getPartCoordinates(input)
 
-	return findEngines(gears, parts)
+	return findGearRatios(gears, parts)
 }
 
-func findEngines(gears []coordinates, parts []part) int {
+func findGearRatios(gears []coordinates, parts []part) int {
 	connections := make(map[string][]int)
 	for _, gear := range gears {
 		for _, part := range parts {
