@@ -106,13 +106,13 @@ func part1(input [][]string) int {
 	return sum
 }
 
-type coordinates struct {
+type coordinate struct {
 	x int
 	y int
 }
 
 type part struct {
-	indices []coordinates
+	indices []coordinate
 	number  int
 }
 
@@ -123,7 +123,7 @@ func part2(input [][]string) int {
 	return findGearRatios(gears, parts)
 }
 
-func findGearRatios(gears []coordinates, parts []part) int {
+func findGearRatios(gears []coordinate, parts []part) int {
 	connections := make(map[string][]int)
 	for _, gear := range gears {
 		for _, part := range parts {
@@ -161,12 +161,12 @@ func abs(n int) int {
 	return n
 }
 
-func getGearCoordinates(input [][]string) []coordinates {
-	c := make([]coordinates, 0)
+func getGearCoordinates(input [][]string) []coordinate {
+	c := make([]coordinate, 0)
 	for y, row := range input {
 		for x, value := range row {
 			if value == "*" {
-				c = append(c, coordinates{
+				c = append(c, coordinate{
 					x: x,
 					y: y,
 				})
@@ -180,53 +180,52 @@ func getGearCoordinates(input [][]string) []coordinates {
 // absolute trash
 func getPartCoordinates(input [][]string) []part {
 	all := make([]part, 0)
-	combined := ""
+	combinedDigits := ""
 	for y, row := range input {
-		index := make([]int, 0)
-		c := make([]coordinates, 0)
+		numberIndices := make([]int, 0)
+		coordinates := make([]coordinate, 0)
 		for x, value := range row {
 			_, err := strconv.Atoi(value)
 
 			if err != nil {
-				r, _ := strconv.Atoi(combined)
-				combined = ""
-				for _, i := range index {
-					c = append(c, coordinates{
+				number, _ := strconv.Atoi(combinedDigits)
+				for _, i := range numberIndices {
+					coordinates = append(coordinates, coordinate{
 						x: i,
 						y: y,
 					})
 				}
 
-				if len(c) > 0 {
+				if len(coordinates) > 0 {
 					all = append(all, part{
-						indices: c,
-						number:  r,
+						indices: coordinates,
+						number:  number,
 					})
 				}
 
-				index = nil
-				c = nil
+				combinedDigits = ""
+				numberIndices = nil
+				coordinates = nil
 
 				continue
 			}
 
-			combined += value
-			index = append(index, x)
+			combinedDigits += value
+			numberIndices = append(numberIndices, x)
 
 			if x == len(row)-1 {
-				r, _ := strconv.Atoi(combined)
-				combined = ""
-				for _, i := range index {
-					c = append(c, coordinates{
+				number, _ := strconv.Atoi(combinedDigits)
+				for _, i := range numberIndices {
+					coordinates = append(coordinates, coordinate{
 						x: i,
 						y: y,
 					})
 				}
 
-				if len(c) > 0 {
+				if len(coordinates) > 0 {
 					all = append(all, part{
-						indices: c,
-						number:  r,
+						indices: coordinates,
+						number:  number,
 					})
 				}
 			}

@@ -56,8 +56,8 @@ func part2(cards []card) int {
 		originalAndCopies = append(originalAndCopies, 1)
 	}
 
-	for index, game := range cards {
-		matchingCards := game.matchingNumbers()
+	for index, card := range cards {
+		matchingCards := card.matchingNumbers()
 		if matchingCards == 0 {
 			continue
 		}
