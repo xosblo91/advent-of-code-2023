@@ -5,9 +5,9 @@ import (
 )
 
 func TestPart1(t *testing.T) {
-	println(part1(readInput()))
+	println(part1())
 }
 
 func TestPart2(t *testing.T) {
-	println(part2(readInput()))
+	println(part2())
 }
