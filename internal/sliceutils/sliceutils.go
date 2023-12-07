@@ -14,3 +14,12 @@ func MakeBatches[T any](input []T, batchSize int) [][]T {
 
 	return batches
 }
+
+func ToStringSlice(input string) []string {
+	output := make([]string, 0)
+	for _, s := range input {
+		output = append(output, string(s))
+	}
+
+	return output
+}

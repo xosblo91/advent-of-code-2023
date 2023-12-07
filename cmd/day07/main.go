@@ -3,12 +3,14 @@ package main
 import (
 	"bufio"
 	"os"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/xosblo91/advent-of-code-2023/internal/conv"
 )
 
-var cardWeights = map[string]int{
+var cardWeights1 = map[string]int{
 	"2": 1,
 	"3": 2,
 	"4": 3,
@@ -24,35 +26,39 @@ var cardWeights = map[string]int{
 	"A": 13,
 }
 
-// const (
-// 	HC = "HighCard"
-// 	OP = "OnePair"
-// 	TP = "TwoPair"
-// 	TH = "ThreeOfAKind"
-// 	FH = "FullHouse"
-// 	FO = "FourOfAKind"
-// 	FI = "FiveOfAKind"
-// )
-//
-// var handStrength = map[string]int{
-// 	HC: 1, // 1 2 3 4 5 - 5
-// 	OP: 2, // 1 1 3 4 5 - 4
-// 	TP: 3, // 1 1 2 2 5 - 3
-// 	TH: 4, // 1 1 1 4 5 - 3
-// 	FH: 5, // 1 1 1 2 2 - 2
-// 	FO: 6, // 1 1 1 1 2 - 2
-// 	FI: 7, // 1 1 1 1 1 - 1
-// }
-
-type game struct {
-	cards    string
-	betSize  int
-	strength int
+var cardWeights2 = map[string]int{
+	"J": 0,
+	"2": 1,
+	"3": 2,
+	"4": 3,
+	"5": 4,
+	"6": 5,
+	"7": 6,
+	"8": 7,
+	"9": 8,
+	"T": 9,
+	"Q": 11,
+	"K": 12,
+	"A": 13,
 }
 
-func (g *game) setHandStrength() {
+type game struct {
+	cards          string
+	optimizedCards string
+	betSize        int
+	strength       int
+}
+
+func (g *game) setHandStrength(optimize bool) {
 	count := make(map[string]int)
-	for _, card := range g.cards {
+	to := ""
+	if optimize {
+		to = g.optimizedCards
+	} else {
+		to = g.cards
+	}
+
+	for _, card := range to {
 		if _, exist := count[string(card)]; !exist {
 			count[string(card)] = 1
 		} else {
@@ -88,12 +94,82 @@ func (g *game) setHandStrength() {
 	}
 }
 
-func part1(games []*game) int {
-	for _, g := range games {
-		g.setHandStrength()
+func (g *game) optimizeWithJoker() {
+	count := make(map[string]int)
+	v := ""
+	h := 0
+	for _, card := range g.cards {
+		if _, exist := count[string(card)]; !exist {
+			count[string(card)] = 1
+		} else {
+			t := count[string(card)]
+			t++
+			count[string(card)] = t
+		}
+
+		if count[string(card)] >= h && string(card) != "J" {
+			v = string(card)
+			h = count[string(card)]
+		}
 	}
 
-	return 0
+	temp := g.cards
+	for _, card := range g.cards {
+		if string(card) == "J" {
+			g.optimizedCards = strings.ReplaceAll(temp, "J", v)
+		}
+	}
+	if g.optimizedCards == "" {
+		g.optimizedCards = g.cards
+	}
+}
+
+func part1(games []*game) int {
+	for _, g := range games {
+		g.setHandStrength(false)
+	}
+
+	return summarizeScore(sortHands(games, cardWeights1))
+}
+
+func part2(games []*game) int {
+	for _, g := range games {
+		g.optimizeWithJoker()
+		g.setHandStrength(true)
+	}
+
+	return summarizeScore(sortHands(games, cardWeights2))
+}
+
+func sortHands(games []*game, weights map[string]int) []*game {
+	sort.Slice(games, func(i, j int) bool {
+		if games[i].strength == games[j].strength {
+			for ii := 0; ii < len(games[ii].cards); ii++ {
+				if weights[string(games[i].cards[ii])] > weights[string(games[j].cards[ii])] {
+					return true
+				}
+				if weights[string(games[i].cards[ii])] == weights[string(games[j].cards[ii])] {
+					continue
+				}
+				return false
+			}
+		}
+
+		return games[i].strength > games[j].strength
+	})
+
+	slices.Reverse(games)
+
+	return games
+}
+
+func summarizeScore(sorted []*game) int {
+	sum := 0
+	for i, g := range sorted {
+		sum += (i + 1) * g.betSize
+	}
+
+	return sum
 }
 
 func readInput() []*game {
