@@ -113,10 +113,9 @@ func (g *game) optimizeWithJoker() {
 		}
 	}
 
-	temp := g.cards
 	for _, card := range g.cards {
 		if string(card) == "J" {
-			g.optimizedCards = strings.ReplaceAll(temp, "J", v)
+			g.optimizedCards = strings.ReplaceAll(g.cards, "J", v)
 		}
 	}
 	if g.optimizedCards == "" {
