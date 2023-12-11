@@ -23,3 +23,12 @@ func ToStringSlice(input string) []string {
 
 	return output
 }
+
+func Sum(input []int) int {
+	sum := 0
+	for _, i := range input {
+		sum += i
+	}
+
+	return sum
+}
